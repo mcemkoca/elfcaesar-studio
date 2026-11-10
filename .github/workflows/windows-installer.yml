@@ -18,7 +18,7 @@ jobs:
       - name: Setup.exe üret
         shell: pwsh
         run: ./packaging/build.ps1 -Python python -PythonVersion "-I"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ElfCaesarStudio-Setup
           path: |
