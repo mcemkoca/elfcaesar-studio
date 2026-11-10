@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "ElfCaesar Parola Köprüsü",
+  "short_name": "ElfCaesar",
+  "version": "6.10.3",
+  "description": "ElfCaesar Studio parola kasasından güvenli otomatik doldurma ve oltalama kalkanı. Parolalar bilgisayarından çıkmaz.",
+  "author": "Dante",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyXl1DQo2F+NHGQshLDuk7sjH/beZ4VoYEVunisiJzlq/XsneUZWH9OCU9bccMFEAkN7tkpCW7fUQL/34N/wj4KYEU82yDuZ2RxBaVp24V/oP4eEupD4VWqwET0A9im6fSCJxNeI7Pn06Gl5Hp7H4QrTNL20inFmfUdMqUfn+xOiWYcKd+vGHq6vR00+4pb5uXGdjOQPvhOu0Av6rIdPwnL72C34TOFkcY1fBV4aHgCriDLuzPPNpmWeO4CNPqX31avb+Zw1ppN0zE/FijmuWYLaG0fNC5QMgUHJhClil7qZqLdCmBfu77VIe6zh5FpIy66u9rhJ+yG/xJIuCbIKsFwIDAQAB",
+  "permissions": [
+    "nativeMessaging",
+    "storage"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ElfCaesar",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}

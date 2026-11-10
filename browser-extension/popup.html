@@ -1,0 +1,26 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><title>ElfCaesar</title>
+<style>
+body{margin:0;width:300px;background:#0f1a27;color:#e9f0f7;font:13px/1.45 "Segoe UI",system-ui,sans-serif}
+header{display:flex;gap:10px;align-items:center;padding:14px 16px;border-bottom:1px solid #22364b}
+header img{width:32px;height:32px}
+header b{display:block;font-size:14px} header span{color:#8a9db1;font-size:11px}
+main{padding:12px 16px 16px;display:grid;gap:8px}
+.row{display:flex;justify-content:space-between} .row span{color:#8a9db1}
+.ok{color:#7bd8a7}.bad{color:#ff7777}.warn{color:#f4b65e}
+button{border:0;border-radius:8px;padding:9px 12px;font:700 12px "Segoe UI",sans-serif;cursor:pointer;background:#f4b65e;color:#121a26;box-shadow:0 3px 0 #7a5420}
+button.ghost{background:#1a2a3c;color:#e9f0f7;box-shadow:0 3px 0 #0a121c}
+.code{font:700 26px Consolas,monospace;letter-spacing:.2em;text-align:center;color:#b59cff;padding:6px}
+p{margin:0;color:#8a9db1;font-size:12px}
+</style></head><body>
+<header><img src="icons/icon32.png" alt=""><div><b>ElfCaesar Parola Köprüsü</b><span>Bir Dante eseri · v6.10.3</span></div></header>
+<main>
+<div class="row"><span>ElfCaesar Studio</span><b id="app">…</b></div>
+<div class="row"><span>Eşleşme</span><b id="pair">…</b></div>
+<div class="row"><span>Parola kasası</span><b id="vault">…</b></div>
+<div id="codebox" hidden><div class="code" id="code"></div><p>Uygulamada aynı kodu görüyorsan onayla.</p></div>
+<button id="pairBtn" hidden>EŞLEŞTİR</button>
+<button id="openBtn" class="ghost" hidden>ELFCAESAR'I AÇ</button>
+<button id="unpairBtn" class="ghost" hidden>EŞLEŞMEYİ KALDIR</button>
+<p>Parolalar bilgisayarından çıkmaz. Eklenti yalnızca açık sekmedeki sitenin birebir kayıtlarını görür; benzer görünen sahte sitelere hiçbir şey vermez.</p>
+</main>
+<script src="popup.js"></script></body></html>

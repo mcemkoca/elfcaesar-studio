@@ -1,0 +1,15 @@
+ElfCaesar Studio — üçüncü taraf bileşenler / Third-party notices
+Yapımcı: Dante
+
+1) SecLists — Passwords/Common-Credentials/10k-most-common.txt
+   Kaynak: https://github.com/danielmiessler/SecLists
+   Lisans: MIT License, Copyright (c) 2018 Daniel Miessler
+   Dosya: studio_ui/data/common_global.txt (tam lisans metni: studio_ui/data/SECLISTS_LICENSE.txt)
+   Kullanım: yalnızca çevrimdışı zayıf parola denetimi; liste bilgisayardan dışarı gönderilmez.
+
+2) cryptography — Apache License 2.0 / BSD (https://github.com/pyca/cryptography)
+3) tkinterdnd2 / tkdnd — MIT (isteğe bağlı sürükle-bırak)
+4) Python 3.12 ve Tcl/Tk — PSF License / Tcl/Tk License (PyInstaller ile paketlenmiştir)
+5) python-qrcode — BSD License (https://github.com/lincolnloop/python-qrcode)
+6) Dante imzası, URW Base35 “Z003” yazı tipinden görsel olarak üretilmiştir (AGPL + yazı tipi istisnası);
+   yazı tipi dosyası uygulamaya dahil değildir.

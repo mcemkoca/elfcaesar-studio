@@ -1,0 +1,20 @@
+ELFCAESAR STUDIO — KURULUMDAN ÖNCE
+Yapımcı: Dante
+
+• Hoş geldin hediyesi: ilk açılışta kısa bir tanıtım ve sana özel “Kurucu Elf” rozeti seni bekliyor.
+
+• ElfCaesar Studio tamamen bu bilgisayarda çalışır. Hesap, sunucu veya internet bağlantısı gerektirmez.
+
+• Güvenli Kasa ve Mesaj Köprüsü AES-256-GCM, scrypt, X25519 ve Ed25519 kullanır.
+  ELFC2 kodlaması ise bir şifreleme DEĞİLDİR; yalnızca dönüştürme/gizleme amaçlıdır.
+
+• Parolanızı veya .elfid kimlik dosyanızı kaybederseniz şifreli verilerinizi kurtarmanın yolu yoktur.
+  Kimlik ve kasa dosyalarınızı yedekleyin.
+
+• Ayarlar ve kişi defteri (yalnızca açık anahtarlar): %APPDATA%\ElfCaesar
+  Hata günlükleri (içerik içermez): %LOCALAPPDATA%\ElfCaesar\logs
+
+• Bu yazılım bağımsız bir güvenlik denetiminden geçmemiştir.
+
+• Uygulama dijital olarak imzalanmamışsa Windows SmartScreen "Bilinmeyen yayımcı" uyarısı gösterebilir.
+  "Ek bilgi" → "Yine de çalıştır" ile devam edebilirsiniz.

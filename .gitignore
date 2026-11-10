@@ -1,0 +1,14 @@
+build/
+dist/
+.venv-build/
+__pycache__/
+.pytest_cache/
+
+# gizli anahtarlar asla depoya girmez
+*.pem
+*.pfx
+*.key
+PAROLA*.txt
+Dante-Imza-Anahtarlari/
+node_modules/
+

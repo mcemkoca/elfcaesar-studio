@@ -1,0 +1,7 @@
+{
+  "name": "com.dante.elfcaesar",
+  "description": "ElfCaesar Studio tarayıcı yardımcısı (Dante)",
+  "path": "ElfCaesarNativeHost.exe",
+  "type": "stdio",
+  "allowed_origins": ["chrome-extension://dehlpobkdpbaennidmmeglcedcdfcfae/"]
+}

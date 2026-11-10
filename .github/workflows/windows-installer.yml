@@ -1,0 +1,26 @@
+name: Windows kurulum paketi
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Inno Setup
+        run: choco install innosetup -y --no-progress
+      - name: Setup.exe üret
+        shell: pwsh
+        run: ./packaging/build.ps1 -Python python -PythonVersion "-I"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ElfCaesarStudio-Setup
+          path: |
+            dist/*.exe
+            dist/*.sha256
