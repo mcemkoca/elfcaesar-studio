@@ -1,6 +1,37 @@
 # ELFCAESAR STUDIO 6.10.3 — Windows Edition
 *Bir Dante eseri.*
 
+[![Testler](https://github.com/mcemkoca/elfcaesar-studio/actions/workflows/tests.yml/badge.svg)](https://github.com/mcemkoca/elfcaesar-studio/actions/workflows/tests.yml)
+[![CodeQL](https://github.com/mcemkoca/elfcaesar-studio/actions/workflows/codeql.yml/badge.svg)](https://github.com/mcemkoca/elfcaesar-studio/actions/workflows/codeql.yml)
+[![Güvenlik taraması](https://github.com/mcemkoca/elfcaesar-studio/actions/workflows/security-scan.yml/badge.svg)](https://github.com/mcemkoca/elfcaesar-studio/actions/workflows/security-scan.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/mcemkoca/elfcaesar-studio/badge)](https://scorecard.dev/viewer/?uri=github.com/mcemkoca/elfcaesar-studio)
+
+Çevrimdışı çalışan şifreleme, uçtan uca şifreli mesaj, dijital imza, parola kasası ve KVKK kişisel veri kalkanı.
+Hesap yok, sunucu yok; verin bilgisayarından çıkmaz.
+
+- **İndir:** [Son sürüm (Releases)](https://github.com/mcemkoca/elfcaesar-studio/releases/latest)
+- **Kılavuz ve tanıtım videosu:** https://mcemkoca.github.io/elfcaesar-studio/kilavuz/
+- **Gizlilik politikası ve kullanım koşulları:** https://mcemkoca.github.io/elfcaesar-studio/yasal/
+- **Code signing policy:** https://mcemkoca.github.io/elfcaesar-studio/kod-imzalama/
+- **Güvenlik açığı bildirimi:** [SECURITY.md](SECURITY.md) · **Beta geri bildirimi:** [Issues → Beta geri bildirimi](https://github.com/mcemkoca/elfcaesar-studio/issues/new?template=beta.yml)
+
+### “Windows bilgisayarınızı korudu” uyarısı
+Kurulum dosyası Dante'nin kendi sertifikasıyla imzalıdır; Windows bu sertifikayı henüz tanımadığı için SmartScreen
+uyarı gösterebilir. Bu beklenen bir durumdur: **Ek bilgi → Yine de çalıştır**. Açık kaynak kod imzalama sertifikası
+başvurusu sürmektedir. Kurmadan önce dosyanın gerçekten bizden geldiğini aşağıdaki gibi doğrulayabilirsin.
+
+### İndirdiğin dosyayı doğrula
+Her sürümde `SHA256SUMS.txt` ve Dante sürüm anahtarıyla (Ed25519, parmak izi `B715 8370 19A2 935F`) imzalanmış
+`SHA256SUMS.txt.sig` bulunur. Dosyaları aynı klasöre indir ve:
+
+```
+pip install cryptography
+python verify_release.py SHA256SUMS.txt SHA256SUMS.txt.sig
+```
+`verify_release.py` depodaki `tools/` klasöründedir. Yalnızca özet için PowerShell: `Get-FileHash .\ElfCaesarStudio-6.10.3-Setup.exe`.
+Dosyanın VirusTotal sonucu sürüm notlarındadır.
+
+## Sürüm notları
 ## 6.10.3 — Firefox ve mağaza paketleri
 - `TarayiciEklentisi\ElfCaesar-Firefox-6.10.3.xpi`: Firefox → about:debugging → Geçici eklenti yükle (imzalı sürüm AMO onayından sonra).
 - `TarayiciEklentisi\ElfCaesar-Chrome-WebStore-6.10.3.zip`: Chrome Web Mağazası geliştirici panosuna yüklenecek paket.

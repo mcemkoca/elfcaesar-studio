@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ElfCaesar Studio</title>
+<meta name="description" content="Çevrimdışı şifreleme, parola kasası, dijital imza ve KVKK kişisel veri kalkanı. Hesap yok, sunucu yok.">
+<link rel="icon" href="media/logo.png">
+<style>
+:root{--bg:#f5f3ee;--panel:#fff;--ink:#18202b;--muted:#5b6878;--line:#dcd7cc;--accent:#a96a12;--cyan:#0f7d8c;
+--display:"Space Grotesk","Segoe UI",system-ui,sans-serif;--body:"Inter","Segoe UI",system-ui,sans-serif;--mono:"JetBrains Mono",Consolas,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#070c13;--panel:#0f1a27;--ink:#e9f0f7;--muted:#8a9db1;--line:#22364b;--accent:#f4b65e;--cyan:#62d9e8;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--body)}
+main{max-width:980px;margin:0 auto;padding:40px 16px 64px}
+header{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+header img{width:72px;height:72px}
+.eyebrow{font:700 12px/1 var(--mono);letter-spacing:.14em;color:var(--accent)}
+h1{font:700 clamp(32px,6vw,52px)/1.05 var(--display);margin:8px 0 0}
+.lead{font-size:19px;color:var(--muted);max-width:640px;margin:20px 0 28px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;padding:12px 20px;border-radius:10px;font-weight:700;text-decoration:none;border:1px solid var(--line);color:var(--ink);background:var(--panel)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#1a1206}
+video{width:100%;border-radius:14px;border:1px solid var(--line);margin:36px 0 8px;background:#000}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:28px}
+@media (max-width:640px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.card h2{font:700 17px/1.3 var(--display);margin:0 0 6px}
+.card p{margin:0;color:var(--muted);font-size:15px}
+h3{font:700 22px/1.2 var(--display);margin:44px 0 10px}
+code,pre{font-family:var(--mono);font-size:13px}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;overflow-x:auto}
+.links a{color:var(--cyan)}
+footer{margin-top:48px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+<main>
+<header><img src="media/logo.png" alt="ElfCaesar logosu"><div><div class="eyebrow">ELFCAESAR STUDIO · BİR DANTE ESERİ</div><h1>Verin, bilgisayarından çıkmadan korunur.</h1></div></header>
+<p class="lead">Şifreleme, uçtan uca şifreli mesaj, dijital imza, parola kasası ve KVKK kişisel veri kalkanı — tek, çevrimdışı Windows uygulamasında. Hesap yok, sunucu yok, telemetri yok.</p>
+<div class="cta">
+<a class="btn primary" href="https://github.com/mcemkoca/elfcaesar-studio/releases/latest">Windows için indir (ücretsiz)</a>
+<a class="btn" href="kilavuz/">Kullanım kılavuzu</a>
+<a class="btn" href="https://github.com/mcemkoca/elfcaesar-studio">Kaynak kod</a>
+</div>
+<video controls preload="metadata" poster="media/poster.jpg" src="media/tanitim.mp4"></video>
+<div class="grid">
+<div class="card"><h2>Parola Kasası</h2><p>Tarayıcılardan içe aktarma, sızıntı ve tekrar denetimi, Domino analizi, Dijital Miras, baskı parolası.</p></div>
+<div class="card"><h2>Tarayıcı eklentisi</h2><p>Chrome, Edge, Brave, Opera ve Firefox'ta yalnızca birebir aynı alan adına doldurur; taklit sitede uyarır.</p></div>
+<div class="card"><h2>Şifreli mesaj ve imza</h2><p>WhatsApp ve Telegram'a uçtan uca şifreli mesaj; Ed25519 dijital imza ve kişi kartları.</p></div>
+<div class="card"><h2>KVKK Kalkanı</h2><p>Klasörlerdeki T.C. kimlik, IBAN, kart numarası gibi verileri yerelde bulur, maskeler, envanter raporu çıkarır.</p></div>
+</div>
+<h3>“Windows bilgisayarınızı korudu” uyarısı</h3>
+<p>Kurulum dosyası Dante'nin kendi sertifikasıyla imzalıdır. Windows bu sertifikayı henüz tanımadığı için SmartScreen uyarısı görebilirsin: <b>Ek bilgi → Yine de çalıştır</b>. Kurmadan önce dosyanın bizden geldiğini doğrulayabilirsin:</p>
+<pre>pip install cryptography
+python verify_release.py SHA256SUMS.txt SHA256SUMS.txt.sig</pre>
+<p class="links">Dante sürüm anahtarı parmak izi <code>B715 8370 19A2 935F</code> · <a href="https://github.com/mcemkoca/elfcaesar-studio/blob/main/tools/verify_release.py">verify_release.py</a></p>
+<h3>Beta</h3>
+<p class="links">Deneyip fikrini söyler misin? <a href="https://github.com/mcemkoca/elfcaesar-studio/issues/new?template=beta.yml">5 soruluk geri bildirim formu</a> · Güvenlik açığı: <a href="https://github.com/mcemkoca/elfcaesar-studio/security/advisories/new">özel bildirim</a></p>
+<footer class="links"><a href="yasal/">Gizlilik politikası ve kullanım koşulları</a> · <a href="kod-imzalama/">Code signing policy</a> · <a href="https://github.com/mcemkoca/elfcaesar-studio/blob/main/SECURITY.md">Güvenlik politikası</a> · MIT lisansı · Elf dili adları Tolkien'den esinlenmiştir; Tolkien Estate ile bağlantılı değildir.</footer>
+</main>
+</body>
+</html>

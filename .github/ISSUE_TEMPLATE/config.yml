@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Güvenlik açığı bildir (özel)
+    url: https://github.com/mcemkoca/elfcaesar-studio/security/advisories/new
+    about: Güvenlik açıklarını lütfen herkese açık issue yerine buradan bildirin.

@@ -154,7 +154,8 @@ def lookalike(host_or_url: str, known_domains) -> dict | None:
 
 # ------------------------------------------------------------------ isteğe bağlı çevrim içi kontrol
 def hibp_prefix(password: str) -> tuple[str, str]:
-    h = hashlib.sha1(password.encode("utf-8")).hexdigest().upper()
+    # SHA-1, Pwned Passwords k-anonimlik protokolünün gereğidir; güvenlik amacıyla kullanılmaz.
+    h = hashlib.sha1(password.encode("utf-8"), usedforsecurity=False).hexdigest().upper()  # nosemgrep
     return h[:5], h[5:]
 
 

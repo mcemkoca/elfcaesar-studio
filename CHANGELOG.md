@@ -2,6 +2,14 @@
 
 Sürümleme: MAJOR.MINOR.PATCH — PATCH düzeltme ve küçük iyileştirme, MINOR yeni özellik grubu, MAJOR dosya biçimi veya motor değişikliği.
 
+## Yayımlanmamış (main)
+
+- Ücretsiz güvenlik altyapısı: CodeQL, Bandit, pip-audit, gitleaks, OpenSSF Scorecard ve Dependabot GitHub Actions'ta.
+- `SECURITY.md`, özel güvenlik bildirimi, hata ve beta geri bildirimi şablonları, teşekkür listesi.
+- Ed25519 imzalı `SHA256SUMS.txt` ve bağımsız doğrulayıcı `tools/verify_release.py`.
+- Proje sitesi (GitHub Pages), kod imzalama politikası, gizlilik politikasına KVKK md. 10 aydınlatması ve eklenti veri beyanı.
+- Mağaza kayıt metinleri ve görselleri: `docs/dagitim/`.
+
 ## 6.10.3 — Firefox ve mağaza paketleri (10.11.2026)
 
 - Tarayıcı eklentisinin Firefox sürümü (`ElfCaesar-Firefox-6.10.3.xpi`) ve Mozilla yerel yardımcı kaydı.

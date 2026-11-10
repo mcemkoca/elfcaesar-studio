@@ -1,0 +1,31 @@
+name: Hata bildirimi
+description: Bir şey beklendiği gibi çalışmıyor
+labels: [hata]
+body:
+  - type: markdown
+    attributes:
+      value: "Lütfen parola, anahtar, kişisel veri veya şifreli dosya içeriği PAYLAŞMAYIN. Uygulamadaki HATA BİLDİR düğmesi içerik içermeyen bir tanı raporu üretir."
+  - type: input
+    id: surum
+    attributes:
+      label: Sürüm
+      placeholder: "6.10.3 (Hakkında penceresinde yazar)"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows sürümü
+      placeholder: "Windows 11 24H2"
+  - type: textarea
+    id: adimlar
+    attributes:
+      label: Ne yaptınız, ne oldu, ne bekliyordunuz?
+    validations:
+      required: true
+  - type: textarea
+    id: tani
+    attributes:
+      label: Tanı raporu (isteğe bağlı)
+      description: HATA BİLDİR düğmesinin ürettiği metni yapıştırın.
+      render: text

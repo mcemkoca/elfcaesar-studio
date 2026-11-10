@@ -418,7 +418,7 @@ class PasswordsMixin:
         def fetch(prefix):
             req = urllib.request.Request(f"https://api.pwnedpasswords.com/range/{prefix}",
                                          headers={"User-Agent": "ElfCaesarStudio", "Add-Padding": "true"})
-            with urllib.request.urlopen(req, timeout=10) as r:
+            with urllib.request.urlopen(req, timeout=10) as r:  # nosec B310
                 return r.read().decode()
         found, cache = [], {}
         self.config(cursor="watch")

@@ -12,8 +12,8 @@ nav a{color:var(--accent);margin-right:14px} li{margin:4px 0} small{color:var(--
 </style></head><body><main>
 <div class="eyebrow">ELFCAESAR STUDIO · BİR DANTE ESERİ</div>
 <h1>Gizlilik ve Kullanım Koşulları</h1>
-<p><small>Sürüm 6.10.2 · Yürürlük: 10.11.2026</small></p>
-<p class="note">TASLAK: Bu metinler geliştirici tarafından hazırlanmıştır ve henüz bir hukuk danışmanı tarafından incelenmemiştir.
+<p><small>Sürüm 6.10.3 · Yürürlük: 11.11.2026</small></p>
+<p class="note">TASLAK: Bu metinler geliştirici tarafından hazırlanmıştır ve henüz bir hukuk danışmanı tarafından incelenmemiştir (inceleme talep edildi).
 Ücretli dağıtımdan önce gözden geçirilmelidir.</p>
 <nav><a href="#gizlilik">Gizlilik</a><a href="#kosullar">Kullanım Koşulları</a><a href="#guvenlik">Güvenlik bildirimi</a><a href="#lisans">Lisanslar</a></nav>
 
@@ -24,12 +24,22 @@ reklam veya kullanım istatistiği (telemetri) yoktur.</p>
 <li><b>Şifrelediğin her şey</b> (dosyalar, mesajlar, parolalar, kimlik anahtarları) yalnızca senin seçtiğin konumlarda, senin parolanla şifreli olarak durur. Geliştiricinin bunlara erişimi yoktur ve parolanı kurtaramaz.</li>
 <li><b>Yerel kayıtlar:</b> ayarlar ve kişi defteri (yalnızca açık anahtarlar) <code>%APPDATA%\ElfCaesar</code>; hata günlükleri (yalnızca hata türü ve kod satırları) <code>%LOCALAPPDATA%\ElfCaesar\logs</code> klasöründe tutulur ve bilgisayarından çıkmaz.</li>
 <li><b>İsteğe bağlı çevrim içi sızıntı kontrolü:</b> yalnızca sen başlatırsan, her parolanın SHA-1 özetinin <b>ilk 5 karakteri</b> Have I Been Pwned hizmetine (api.pwnedpasswords.com) gönderilir (k-anonimlik). Parola veya tam özet gönderilmez.</li>
-<li><b>Tarayıcı eklentisi:</b> yalnızca bilgisayarındaki ElfCaesar Studio ile yerel olarak konuşur; internete veri göndermez. Açık sekmenin adresi yalnızca alan adını doğrulamak için yerelde kullanılır.</li>
+<li><b>Tarayıcı eklentisi (Chrome, Edge, Opera, Brave, Firefox):</b> yalnızca bilgisayarındaki ElfCaesar Studio ile yerel olarak (native messaging) konuşur; internete, geliştiriciye veya üçüncü kişilere hiçbir veri göndermez. Kullandığı tek bilgi açık sekmenin adresidir; bu adres yalnızca kayıtlı alan adıyla eşleşme ve oltalama kontrolü için yerelde kullanılır ve saklanmaz. Doldurulan kullanıcı adı ve parola yalnızca senin onayınla ve yalnızca o sayfanın giriş formuna yazılır. Eklenti reklam, analiz, izleme veya veri satışı yapmaz; veriler eklentinin tek amacı olan parola doldurma dışında kullanılmaz ve insanlar tarafından okunmaz.</li>
 <li><b>Hata bildirimi:</b> “Hata bildir” raporu yalnızca sen gönderirsen paylaşılır ve sürüm, Windows bilgisi, ekran ölçeği ve hata türlerini içerir; içerik içermez.</li>
+<li><b>Beta geri bildirimi:</b> beta bildirim sayfasını veya GitHub'daki geri bildirim formunu kullanırsan, yazdığın metin ve bu hizmetlerdeki görünen adın (claude.ai profil adı veya GitHub kullanıcı adı) geliştiriciye ulaşır. Bu veriler yalnızca hataları düzeltmek ve ürünü geliştirmek için kullanılır, üçüncü kişilerle paylaşılmaz ve beta dönemi bittikten en geç 12 ay sonra silinir. GitHub'a yazdıkların GitHub'ın kendi gizlilik politikasına da tabidir ve herkese açıktır.</li>
 <li><b>KVKK Kalkanı</b> taramaları yereldir; bulunan kişisel veri değerleri gösterilmez ve kaydedilmez.</li>
 </ul>
 <p>6698 sayılı KVKK kapsamında geliştirici, uygulama aracılığıyla kişisel veri işlemez. Uygulamayı bir kurum içinde kullanıyorsan,
 o kurumun kendi veri sorumluluğu devam eder.</p>
+<h3>Aydınlatma (KVKK md. 10)</h3>
+<ul>
+<li><b>Veri sorumlusu:</b> ElfCaesar Studio geliştiricisi (Dante). Başvuru: <a href="https://github.com/mcemkoca/elfcaesar-studio/issues">GitHub Issues</a> veya özel konular için <a href="https://github.com/mcemkoca/elfcaesar-studio/security/advisories/new">özel bildirim</a>.</li>
+<li><b>İşlenen veriler ve amaç:</b> yalnızca yukarıdaki beta geri bildirimi; amaç hata giderme ve ürün geliştirme.</li>
+<li><b>Hukuki sebep:</b> geri bildirimi kendi isteğinle göndermen; veri sorumlusunun meşru menfaati (md. 5/2-f).</li>
+<li><b>Aktarım:</b> yurt içi veya yurt dışına aktarım yapılmaz; geri bildirim hizmetlerinin (claude.ai, GitHub) kendi sunucuları kullanılır.</li>
+<li><b>Hakların (md. 11):</b> verinin işlenip işlenmediğini öğrenme, düzeltilmesini veya silinmesini isteme ve itiraz etme hakkın vardır. Talebin en geç 30 gün içinde ücretsiz yanıtlanır.</li>
+</ul>
+<p><i>GDPR / EU:</i> the same applies to users in the EU; you may request access, correction or deletion of beta feedback at any time via the links above.</p>
 
 <h2 id="kosullar">2. Kullanım Koşulları</h2>
 <ol>
@@ -43,7 +53,7 @@ o kurumun kendi veri sorumluluğu devam eder.</p>
 </ol>
 
 <h2 id="guvenlik">3. Güvenlik açığı bildirimi</h2>
-<p>Bir güvenlik açığı bulduysan lütfen herkese açık paylaşmadan önce geliştiriciye bildir (Hakkında → HATA BİLDİR, “Güvenlik” seçeneği).
+<p>Bir güvenlik açığı bulduysan lütfen herkese açık paylaşmadan önce geliştiriciye bildir (<a href="https://github.com/mcemkoca/elfcaesar-studio/security/advisories/new">GitHub özel güvenlik bildirimi</a>; ayrıntılar <code>SECURITY.md</code>).
 Bildirimleri 7 gün içinde yanıtlamayı ve düzeltmeyi sorumlu bir takvimle yayınlamayı hedefliyoruz.</p>
 
 <h2 id="lisans">4. Lisanslar</h2>

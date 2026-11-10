@@ -1,0 +1,32 @@
+name: Beta geri bildirimi
+description: Beta deneyiminizi paylaşın (5 kısa soru)
+labels: [beta]
+body:
+  - type: dropdown
+    id: kurulum
+    attributes:
+      label: 1. Kurulum ve ilk açılış ne kadar kolaydı?
+      options: ["Çok kolay", "Kolay", "Biraz zorlandım", "Kuramadım"]
+    validations:
+      required: true
+  - type: textarea
+    id: kullanim
+    attributes:
+      label: 2. En çok hangi bölümü kullandınız, ne işinize yaradı?
+    validations:
+      required: true
+  - type: textarea
+    id: zorluk
+    attributes:
+      label: 3. Nerede takıldınız veya ne kafanızı karıştırdı?
+  - type: textarea
+    id: eksik
+    attributes:
+      label: 4. Olsa hemen kullanacağınız bir özellik var mı?
+  - type: dropdown
+    id: oneri
+    attributes:
+      label: 5. Bir arkadaşınıza önerir misiniz? (0 = asla, 10 = kesinlikle)
+      options: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+    validations:
+      required: true

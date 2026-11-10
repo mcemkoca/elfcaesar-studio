@@ -5,7 +5,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 ns: dict = {}
-exec((ROOT / "studio_ui" / "version.py").read_text(encoding="utf-8"), ns)
+exec((ROOT / "studio_ui" / "version.py").read_text(encoding="utf-8"), ns)  # nosec B102
 nums = ([int(x) for x in re.findall(r"\d+", ns["APP_VERSION"])] + [0, 0, 0])[:3]
 tup = tuple(nums + [int(ns.get("APP_BUILD", 0))])
 text = f"""# UTF-8
