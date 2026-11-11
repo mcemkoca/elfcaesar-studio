@@ -2,4 +2,4 @@
 cryptography>=50.0.2
 # Optional test runner
 pytest>=8.0
-qrcode>=7.4
+qrcode>=8.2
