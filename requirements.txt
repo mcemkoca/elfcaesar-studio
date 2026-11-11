@@ -1,5 +1,5 @@
 # Core secure vault: AES-256-GCM + scrypt
-cryptography>=42.0
+cryptography>=50.0.2
 # Optional test runner
 pytest>=8.0
 qrcode>=7.4
