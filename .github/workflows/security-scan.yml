@@ -28,6 +28,6 @@ jobs:
       - name: pip-audit (bağımlılık açıkları)
         run: pip-audit -r requirements.txt -r requirements-optional.txt -r packaging/requirements-build.txt
       - name: Gitleaks (sızmış gizli bilgi)
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
