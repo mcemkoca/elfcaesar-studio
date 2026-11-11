@@ -2,13 +2,14 @@
 
 Sürümleme: MAJOR.MINOR.PATCH — PATCH düzeltme ve küçük iyileştirme, MINOR yeni özellik grubu, MAJOR dosya biçimi veya motor değişikliği.
 
-## Yayımlanmamış (main)
+## 6.11.0 — Parola Yaşam Döngüsü (11.11.2026)
 
-- Ücretsiz güvenlik altyapısı: CodeQL, Bandit, pip-audit, gitleaks, OpenSSF Scorecard ve Dependabot GitHub Actions'ta.
-- `SECURITY.md`, özel güvenlik bildirimi, hata ve beta geri bildirimi şablonları, teşekkür listesi.
-- Ed25519 imzalı `SHA256SUMS.txt` ve bağımsız doğrulayıcı `tools/verify_release.py`.
-- Proje sitesi (GitHub Pages), kod imzalama politikası, gizlilik politikasına KVKK md. 10 aydınlatması ve eklenti veri beyanı.
-- Mağaza kayıt metinleri ve görselleri: `docs/dagitim/`.
+- **Değişim Planı · Süreç Takibi:** her kayıt için nedenler (site veri ihlali, çevrim içi sızıntı, sızıntı listesi, tekrar, zayıflık, yenileme hatırlatması, yaş) ve öncelik. Yeni parola önce “bekleyen” olarak kasaya yazılır; sitedeki eski parola kaybolmaz, SİTEDE DEĞİŞTİRDİM ile tamamlanır. Erteleme, “ihlal beni etkilemiyor”, kayıt zaman çizelgesi, son 30 günde yenilenenler ve kasa sağlığı geçmişi.
+- **Parola Üretici:** rastgele (8–64), heceli/söylenebilir ve PIN; site kuralı (en fazla N karakter veya Apple `passwordrules`), tam entropi hesabı, sızıntı listesi süzgeci, kasada saklanan “son üretilenler”.
+- **Sızıntı Merkezi:** Have I Been Pwned site ihlali kataloğu (CC BY 4.0) uygulamayla gelir; parolan ihlalden önce belirlendiyse kayıt acil değişime alınır. İsteğe bağlı katalog güncellemesi (tüm liste indirilir, hesapların gönderilmez) ve tarihli çevrim içi parola kontrolü.
+- **Tarayıcı eklentisi 6.11.0:** kayıt/parola değiştirme formlarında “Güçlü parola öner” (sitenin `maxlength`/`passwordrules` kurallarına uyar); form gönderilince yeni hesabı kaydet, değişen parolayı güncelle, Değişim Planı'nı onayla. Kaydetme yalnızca https sayfalarda ve sayfanın kendi alan adına yapılır.
+- Kayıt penceresine yenileme hatırlatması; W3C `/.well-known/change-password` ile doğrudan parola değiştirme sayfası.
+- Ücretsiz güvenlik altyapısı (CodeQL, Bandit, pip-audit, gitleaks, OpenSSF Scorecard, Dependabot), `SECURITY.md`, imzalı `SHA256SUMS.txt`, proje sitesi ve mağaza kiti.
 
 ## 6.10.3 — Firefox ve mağaza paketleri (10.11.2026)
 

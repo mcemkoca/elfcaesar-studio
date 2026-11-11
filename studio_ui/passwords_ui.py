@@ -14,12 +14,15 @@ from .pwvault import BROWSER_EXPORT_STEPS, Entry, PasswordVault, parse_share, re
 from .security import password_strength
 from .theme import F, BG, PANEL, INPUT, LINE, FG, FG_2, MUTED, DIM, AMBER, CYAN, GREEN, RED, ORANGE, VIOLET, mix
 from .widgets import StudioButton, Segmented, Tooltip
+from .dialog_base import _Dialog
+from .lifecycle_ui import LifecycleMixin
+from . import lifecycle
 
 ISSUE_COLORS = {"leaked": RED, "reused": ORANGE, "weak": ORANGE, "similar": AMBER, "old": AMBER, "insecure_url": AMBER}
 URL_RE = re.compile(r"^\s*(https?://|www\.)\S+\s*$", re.I)
 
 
-class PasswordsMixin:
+class PasswordsMixin(LifecycleMixin):
     # ------------------------------------------------------------ yardımcılar
     @property
     def pv(self) -> PasswordVault:
@@ -62,29 +65,40 @@ class PasswordsMixin:
             self._pw_locked_view()
             return
         self.pw_audit = pwaudit.audit(self.pv.entries)
+        self._pw_plan_compute()
         if not self.pv.decoy:
-            self.sec.vault_health = self.pw_audit["score"] if self.pv.entries else None
+            self.sec.vault_health = self.pw_plan["score"] if self.pv.entries else None
             self.sec.password_vault = True
             self.after_idle(self.refresh_security)
         self._pw_tiles()
         self._pw_list_card()
+        pl = self._card(self.content, "02 / DEĞİŞİM PLANI · SÜREÇ TAKİBİ", "ÖNCELİKLİ · BEKLEYEN · ERTELENEN · GEÇMİŞ", "history", RED)
+        pl.pack(fill="x", pady=(0, 12))
+        self._pw_plan_card(pl)
+        row0 = tk.Frame(self.content, bg=BG)
+        row0.pack(fill="x", pady=(0, 12))
+        gc = self._card(row0, "03 / PAROLA ÜRETİCİ", "RASTGELE · HECELİ · PIN · SİTE KURALI", "spark", AMBER)
+        lc = self._card(row0, "04 / SIZINTI MERKEZİ", "SİTE İHLALLERİ · PAROLA SIZINTISI", "alert", RED)
+        self._auto_grid(row0, [gc, lc], 460, 2)
+        self._pw_gen_card(gc)
+        self._pw_leak_card(lc)
         row = tk.Frame(self.content, bg=BG)
         row.pack(fill="x", pady=(0, 12))
-        a = self._card(row, "02 / PAROLA DENETİMİ", "ÇEVRİMDIŞI · SIZINTI · TEKRAR · BENZERLİK · YAŞ", "shield", GREEN)
-        d = self._card(row, "03 / DOMİNO ANALİZİ", "BİR HESAP DÜŞERSE HANGİLERİ DÜŞER?", "alert", RED)
+        a = self._card(row, "05 / PAROLA DENETİMİ", "ÇEVRİMDIŞI · SIZINTI · TEKRAR · BENZERLİK · YAŞ", "shield", GREEN)
+        d = self._card(row, "06 / DOMİNO ANALİZİ", "BİR HESAP DÜŞERSE HANGİLERİ DÜŞER?", "alert", RED)
         self._auto_grid(row, [a, d], 460, 2)
         self._pw_audit_card(a)
         self._pw_domino_card(d)
         row2 = tk.Frame(self.content, bg=BG)
         row2.pack(fill="x", pady=(0, 12))
-        q = self._card(row2, "04 / HIZLI DOLDUR · OLTALAMA KALKANI", "CTRL+ALT+P", "send", CYAN)
-        m = self._card(row2, "05 / DİJİTAL MİRAS", "SHAMIR", "idcard", AMBER)
-        b = self._card(row2, "06 / BASKI PAROLASI", "SAHTE KASA", "lock", VIOLET)
+        q = self._card(row2, "07 / HIZLI DOLDUR · OLTALAMA KALKANI", "CTRL+ALT+P", "send", CYAN)
+        m = self._card(row2, "08 / DİJİTAL MİRAS", "SHAMIR", "idcard", AMBER)
+        b = self._card(row2, "09 / BASKI PAROLASI", "SAHTE KASA", "lock", VIOLET)
         self._auto_grid(row2, [q, m, b], 330, 3)
         self._pw_quick_card(q)
         self._pw_miras_card(m)
         self._pw_duress_card(b)
-        sy = self._card(self.content, "07 / YEDEK VE SENKRON", "OTOMATİK YEDEK · BULUT KLASÖRÜ · ÇAKIŞMA BİRLEŞTİRME", "save", GREEN)
+        sy = self._card(self.content, "10 / YEDEK VE SENKRON", "OTOMATİK YEDEK · BULUT KLASÖRÜ · ÇAKIŞMA BİRLEŞTİRME", "save", GREEN)
         sy.pack(fill="x", pady=(0, 12))
         self._pw_sync_card(sy)
 
@@ -106,10 +120,12 @@ class PasswordsMixin:
         btns += [StudioButton(bar, "BAŞKA KASA DOSYASI", self.pw_choose_file, "ghost", "open"),
                  StudioButton(bar, "MİRASTAN KURTAR", self.pw_miras_recover, "ghost", "idcard")]
         self._flow(bar, btns)
-        feats = self._card(self.content, "BU BÖLÜMDE NELER VAR", "6.10.0", "spark", AMBER)
+        feats = self._card(self.content, "BU BÖLÜMDE NELER VAR", "6.11.0", "spark", AMBER)
         feats.pack(fill="x", pady=(0, 12))
         for title, text in (
                 ("Tarayıcılardan içe aktar", "Chrome, Edge, Brave, Opera, Firefox, Bitwarden, KeePass dışa aktarma dosyası; içe aktardıktan sonra açık CSV güvenle imha edilir."),
+                ("Değişim Planı", "Hangi parola neden değişmeli, adım adım değiştir; bekleyen değişiklikler, zaman çizelgesi, hatırlatma."),
+                ("Parola Üretici + Sızıntı Merkezi", "Site kurallarına uyan güçlü parolalar; site veri ihlalleri ve çevrim içi sızıntı kontrolü."),
                 ("Parola Denetimi", "Sızmış, tekrar eden, birbirine benzeyen, zayıf ve 1 yıldan eski parolalar; kasa sağlık puanı."),
                 ("Domino Analizi", "E-posta hesabın düşerse 'parolamı unuttum' ile hangi hesapların ele geçirilebileceğini gösterir."),
                 ("Hızlı Doldur + Oltalama Kalkanı", "Ctrl+Alt+P: açık pencereyi tanır, panoya dokunmadan yazar; kopyaladığın sahte bağlantıyı yakalar."),
@@ -148,6 +164,12 @@ class PasswordsMixin:
             self.notify("error", "vault", "Parola kasası açılamadı", str(exc))
             return
         self.notify("success", "vault", "Parola kasası açıldı", f"{len(self.pv.entries)} kayıt", toast=False)
+        try:
+            urgent = lifecycle.plan(self.pv.entries, self.breach_catalog)["counts"]["urgent"]
+            if urgent and not self.pv.decoy:
+                self.notify("warning", "vault", f"{urgent} parola acil değişim bekliyor", "DEĞİŞİM PLANI kartında en üstte")
+        except Exception:
+            pass
         self._pw_rebuild()
 
     def pw_lock(self, silent=False):
@@ -162,10 +184,12 @@ class PasswordsMixin:
         a = self.pw_audit
         tiles = tk.Frame(self.content, bg=BG)
         tiles.pack(fill="x", pady=(0, 12))
-        items = [("KAYIT", len(self.pv.entries), FG), ("KASA SAĞLIĞI", f"{a['score']}/100",
-                                                       GREEN if a["score"] >= 80 else (AMBER if a["score"] >= 50 else RED)),
-                 ("SIZMIŞ", a["counts"]["leaked"], RED), ("TEKRAR EDEN", a["counts"]["reused"], ORANGE),
-                 ("ZAYIF", a["counts"]["weak"], ORANGE), ("ESKİ", a["counts"]["old"], AMBER)]
+        sc = self.pw_plan["score"]
+        pc = self.pw_plan["counts"]
+        items = [("KAYIT", len(self.pv.entries), FG), ("KASA SAĞLIĞI", f"{sc}/100",
+                                                       GREEN if sc >= 80 else (AMBER if sc >= 50 else RED)),
+                 ("ACİL DEĞİŞİM", pc["urgent"], RED), ("SIZMIŞ", a["counts"]["leaked"], RED),
+                 ("TEKRAR EDEN", a["counts"]["reused"], ORANGE), ("DEĞİŞİM SÜRÜYOR", pc["pending"], CYAN)]
         boxes = []
         for label, value, col in items:
             t = tk.Frame(tiles, bg=PANEL, highlightthickness=1, highlightbackground=LINE)
@@ -292,10 +316,11 @@ class PasswordsMixin:
         if self.pw_filter:
             rows = [e for e in rows if self.pw_filter in a.get(e.id, {}).get("issues", [])]
         for e in rows:
-            res = a.get(e.id, {"issues": []})
-            issues = res["issues"]
-            text = " · ".join(pwaudit.LABELS[i] for i in issues) or "✓ Sağlam"
-            tag = "bad" if {"leaked", "reused"} & set(issues) else ("warn" if issues else "ok")
+            item = getattr(self, "pw_plan_by_id", {}).get(e.id) or {"reasons": [], "state": "ok"}
+            text = " · ".join(r["label"] for r in item["reasons"]) or "✓ Sağlam"
+            if item["state"] == "pending":
+                text = "⟳ Değişim sürüyor · " + text
+            tag = {"urgent": "bad", "recommended": "warn", "snoozed": "warn", "pending": "warn"}.get(item["state"], "ok")
             age = (now - e.changed) / 86400
             age_t = "bugün" if age < 1 else (f"{age:.0f} gün" if age < 60 else (f"{age / 30:.0f} ay" if age < 730 else f"{age / 365:.0f} yıl"))
             tree.insert("", "end", iid=e.id, values=(e.title, e.username, e.domain, text, age_t), tags=(tag,))
@@ -377,11 +402,13 @@ class PasswordsMixin:
     # ------------------------------------------------------------ denetim
     def _pw_audit_card(self, card):
         a = self.pw_audit
+        sc = self.pw_plan["score"]
         body = tk.Frame(card, bg=PANEL)
         body.pack(fill="x", padx=16, pady=(0, 6))
-        col = GREEN if a["score"] >= 80 else (AMBER if a["score"] >= 50 else RED)
-        tk.Label(body, text=f"{a['score']}", bg=PANEL, fg=col, font=F["display"]).pack(side="left")
-        tk.Label(body, text=" / 100  kasa sağlığı", bg=PANEL, fg=MUTED, font=F["small"]).pack(side="left", anchor="s", pady=6)
+        col = GREEN if sc >= 80 else (AMBER if sc >= 50 else RED)
+        tk.Label(body, text=f"{sc}", bg=PANEL, fg=col, font=F["display"]).pack(side="left")
+        tk.Label(body, text=" / 100  kasa sağlığı" + (" · site ihlalleri dahil" if self.pw_plan.get("breached") else ""),
+                 bg=PANEL, fg=MUTED, font=F["small"]).pack(side="left", anchor="s", pady=6)
         for key, label in pwaudit.LABELS.items():
             n = a["counts"][key]
             r = tk.Frame(card, bg=PANEL)
@@ -403,45 +430,6 @@ class PasswordsMixin:
         self.pw_filter = key
         self._pw_render()
         self.content_canvas.yview_moveto(0.12)
-
-    def pw_hibp(self):
-        if not self.pv.entries:
-            return
-        if not messagebox.askyesno(
-                "Çevrim içi sızıntı kontrolü",
-                "ElfCaesar normalde hiç internete bağlanmaz. Bu kontrol İSTEĞE BAĞLIDIR.\n\n"
-                "Her parolanın SHA-1 özetinin yalnızca ilk 5 karakteri api.pwnedpasswords.com adresine gönderilir "
-                "(k-anonimlik). Parolanın kendisi veya tam özeti asla gönderilmez.\n\nDevam edilsin mi?", parent=self):
-            return
-        import urllib.request
-
-        def fetch(prefix):
-            req = urllib.request.Request(f"https://api.pwnedpasswords.com/range/{prefix}",
-                                         headers={"User-Agent": "ElfCaesarStudio", "Add-Padding": "true"})
-            with urllib.request.urlopen(req, timeout=10) as r:  # nosec B310
-                return r.read().decode()
-        found, cache = [], {}
-        self.config(cursor="watch")
-        self.update_idletasks()
-        try:
-            for e in self.pv.entries:
-                if not e.password:
-                    continue
-                if e.password not in cache:
-                    cache[e.password] = pwaudit.hibp_count(e.password, fetch)
-                if cache[e.password]:
-                    found.append((e, cache[e.password]))
-        except Exception as exc:
-            self.notify("error", "vault", "Çevrim içi kontrol yapılamadı", str(exc))
-            return
-        finally:
-            self.config(cursor="")
-        if not found:
-            self.notify("success", "vault", "Hiçbir parola bilinen sızıntılarda yok", f"{len(cache)} farklı parola denetlendi")
-            return
-        lines = "\n".join(f"• {e.title}: {n:,} sızıntıda".replace(",", ".") for e, n in found[:15])
-        messagebox.showwarning("Sızmış parolalar", f"{len(found)} kayıt bilinen veri sızıntılarında geçiyor:\n\n{lines}\n\n"
-                               "Bu parolaları hemen değiştir.", parent=self)
 
     # ------------------------------------------------------------ domino
     def _pw_domino_card(self, card):
@@ -775,39 +763,6 @@ class PasswordsMixin:
 
 
 # ================================================================== pencereler
-class _Dialog(tk.Toplevel):
-    def __init__(self, app, title, width=560):
-        super().__init__(app)
-        self.app = app
-        self.title(title)
-        self.configure(bg=PANEL)
-        self.resizable(False, False)
-        self.transient(app)
-        self.body = tk.Frame(self, bg=PANEL)
-        self.body.pack(fill="both", expand=True, padx=24, pady=20)
-        self.bind("<Escape>", lambda _e: self.destroy())
-        try:
-            app.shield(self)
-        except Exception:
-            pass
-
-    def field(self, label, value="", show=None, width=46):
-        tk.Label(self.body, text=label, bg=PANEL, fg=DIM, font=F["label"], anchor="w").pack(fill="x", pady=(8, 2))
-        var = tk.StringVar(value=value)
-        e = tk.Entry(self.body, textvariable=var, bg=INPUT, fg=FG, insertbackground=FG, relief="flat", font=F["body"],
-                     highlightthickness=1, highlightbackground=LINE, highlightcolor=VIOLET, width=width, show=show or "")
-        e.pack(fill="x", ipady=6)
-        return var, e
-
-    def center(self):
-        self.update_idletasks()
-        a = self.app
-        x = a.winfo_rootx() + (a.winfo_width() - self.winfo_reqwidth()) // 2
-        y = a.winfo_rooty() + (a.winfo_height() - self.winfo_reqheight()) // 3
-        self.geometry(f"+{max(0, x)}+{max(0, y)}")
-        self.grab_set()
-
-
 class EntryDialog(_Dialog):
     def __init__(self, app, entry: Entry | None, on_save):
         super().__init__(app, "Parola kaydı" if entry else "Yeni parola kaydı")
@@ -829,6 +784,14 @@ class EntryDialog(_Dialog):
         self.st = tk.Label(self.body, text="", bg=PANEL, fg=MUTED, font=F["tiny"], anchor="w")
         self.st.pack(fill="x", pady=(3, 0))
         self.v_pw.trace_add("write", lambda *_: self._strength())
+        if e.pending:
+            tk.Label(self.body, text="⟳ Bu kayıt için hazırlanmış, sitede değiştirilmeyi bekleyen yeni bir parola var (DEĞİŞİM PLANI).",
+                     bg=PANEL, fg=CYAN, font=F["tiny"], anchor="w").pack(fill="x", pady=(3, 0))
+        tk.Label(self.body, text="YENİLEME HATIRLATMASI", bg=PANEL, fg=DIM, font=F["label"], anchor="w").pack(fill="x", pady=(8, 2))
+        self.rot_labels = [lab for _d, lab in lifecycle.ROTATE_CHOICES]
+        cur = dict(lifecycle.ROTATE_CHOICES).get(e.rotate_days, self.rot_labels[0])
+        self.v_rot = tk.StringVar(value=cur)
+        ttk.Combobox(self.body, textvariable=self.v_rot, values=self.rot_labels, state="readonly", width=30).pack(anchor="w")
         self.v_rec, _ = self.field("KURTARMA E-POSTASI (DOMİNO ANALİZİ İÇİN, İSTEĞE BAĞLI)", e.recovery_email)
         self.v_notes, _ = self.field("NOTLAR", e.notes)
         if entry and entry.history:
@@ -846,8 +809,7 @@ class EntryDialog(_Dialog):
         self.pw_e.configure(show="" if self.pw_e.cget("show") else "•")
 
     def _gen(self):
-        from .secure_gen import random_password
-        self.v_pw.set(random_password())
+        self.v_pw.set(self.app.generate_for(registrable_domain(self.v_url.get()), "kayıt"))
         self.pw_e.configure(show="")
 
     def _strength(self):
@@ -866,7 +828,13 @@ class EntryDialog(_Dialog):
         e = self.entry or Entry(title)
         e.title, e.url, e.username = title, self.v_url.get().strip(), self.v_user.get().strip()
         e.recovery_email, e.notes = self.v_rec.get().strip(), self.v_notes.get()
+        e.rotate_days = {lab: d for d, lab in lifecycle.ROTATE_CHOICES}.get(self.v_rot.get(), 0)
+        changed = bool(self.entry) and self.v_pw.get() != e.password
         e.set_password(self.v_pw.get())
+        if changed:
+            if e.pending.get("password") == e.password:
+                e.pending = {}
+            lifecycle.log_event(self.app.pv.meta, "changed", e, "Elle değiştirildi")
         e.modified = time.time()
         self.destroy()
         self.on_save(e, self.entry is None)

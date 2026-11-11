@@ -46,6 +46,12 @@ class Entry:
     recovery_email: str = ""  # hesabın kurtarma e-postası (domino analizi için)
     source: str = ""
     modified: float = field(default_factory=time.time)  # herhangi bir alanın son değiştiği an (senkron birleştirme)
+    # 6.11 · Parola yaşam döngüsü
+    rotate_days: int = 0          # yenileme hatırlatması (0 = yalnızca risk varsa)
+    pending: dict = field(default_factory=dict)   # {"password", "since", "reason"}: sitede değiştirilmeyi bekleyen yeni parola
+    breach_ack: list = field(default_factory=list)  # kullanıcının "bu ihlal beni etkilemiyor" dediği ihlal adları
+    hibp: dict = field(default_factory=dict)      # {"count", "at", "changed"}: çevrim içi sızıntı kontrolü sonucu
+    snooze_until: float = 0.0     # değişim planında erteleme
 
     @property
     def domain(self) -> str:
@@ -58,6 +64,8 @@ class Entry:
             self.password = pw
             self.changed = time.time()
             self.modified = self.changed
+            self.hibp = {}
+            self.snooze_until = 0.0
 
     def matches(self, q: str) -> bool:
         q = q.casefold().strip()

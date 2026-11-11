@@ -13,3 +13,8 @@ Yapımcı: Dante
 5) python-qrcode — BSD License (https://github.com/lincolnloop/python-qrcode)
 6) Dante imzası, URW Base35 “Z003” yazı tipinden görsel olarak üretilmiştir (AGPL + yazı tipi istisnası);
    yazı tipi dosyası uygulamaya dahil değildir.
+
+
+Have I Been Pwned — veri ihlali kataloğu (studio_ui/data/hibp_breaches.json.gz)
+Kaynak: https://haveibeenpwned.com/api/v3/breaches · Lisans: Creative Commons Attribution 4.0 International (CC BY 4.0)
+Atıf: Veri Have I Been Pwned'den alınmıştır; arayüzde ve kılavuzda belirtilir. Açıklamalar ve logolar dahil edilmemiştir.

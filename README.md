@@ -1,4 +1,4 @@
-# ELFCAESAR STUDIO 6.10.3 — Windows Edition
+# ELFCAESAR STUDIO 6.11.0 — Windows Edition
 *Bir Dante eseri.*
 
 [![Testler](https://github.com/mcemkoca/elfcaesar-studio/actions/workflows/tests.yml/badge.svg)](https://github.com/mcemkoca/elfcaesar-studio/actions/workflows/tests.yml)
@@ -28,10 +28,15 @@ Her sürümde `SHA256SUMS.txt` ve Dante sürüm anahtarıyla (Ed25519, parmak iz
 pip install cryptography
 python verify_release.py SHA256SUMS.txt SHA256SUMS.txt.sig
 ```
-`verify_release.py` depodaki `tools/` klasöründedir. Yalnızca özet için PowerShell: `Get-FileHash .\ElfCaesarStudio-6.10.3-Setup.exe`.
+`verify_release.py` depodaki `tools/` klasöründedir. Yalnızca özet için PowerShell: `Get-FileHash .\ElfCaesarStudio-6.11.0-Setup.exe`.
 Dosyanın VirusTotal sonucu sürüm notlarındadır.
 
 ## Sürüm notları
+## 6.11.0 — Parola Yaşam Döngüsü
+- Parola Kasası'nda **Değişim Planı · Süreç Takibi**, **Parola Üretici** ve **Sızıntı Merkezi** kartları.
+- Tarayıcı eklentisi yeni hesaplarda güçlü parola önerir, gönderilen formu kaydeder veya günceller.
+- Site veri ihlali verisi: [Have I Been Pwned](https://haveibeenpwned.com) (CC BY 4.0).
+
 ## 6.10.3 — Firefox ve mağaza paketleri
 - `TarayiciEklentisi\ElfCaesar-Firefox-6.10.3.xpi`: Firefox → about:debugging → Geçici eklenti yükle (imzalı sürüm AMO onayından sonra).
 - `TarayiciEklentisi\ElfCaesar-Chrome-WebStore-6.10.3.zip`: Chrome Web Mağazası geliştirici panosuna yüklenecek paket.

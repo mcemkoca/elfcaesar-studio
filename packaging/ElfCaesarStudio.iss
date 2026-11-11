@@ -1,12 +1,12 @@
 ; ElfCaesar Studio · Windows kurulum betiği (Inno Setup 6.3+)
-; Derleme:  ISCC.exe /DAppVersion=6.10.3 /DAppBuild=6103 packaging\ElfCaesarStudio.iss
+; Derleme:  ISCC.exe /DAppVersion=6.11.0 /DAppBuild=6110 packaging\ElfCaesarStudio.iss
 ; Önce PyInstaller çıktısı hazır olmalı: build\dist\ElfCaesarStudio\ElfCaesarStudio.exe
 
 #ifndef AppVersion
-  #define AppVersion "6.10.3"
+  #define AppVersion "6.11.0"
 #endif
 #ifndef AppBuild
-  #define AppBuild "6103"
+  #define AppBuild "6110"
 #endif
 #define AppName "ElfCaesar Studio"
 #define AppExe "ElfCaesarStudio.exe"
@@ -93,6 +93,11 @@ Name: "contextmenu"; Description: "{cm:TaskContext}"; GroupDescription: "{cm:Gro
 Name: "fileassoc"; Description: "{cm:TaskAssoc}"; GroupDescription: "{cm:GroupIntegration}"
 Name: "browser"; Description: "{cm:TaskBrowser}"; GroupDescription: "{cm:GroupIntegration}"
 Name: "startup"; Description: "{cm:TaskStartup}"; GroupDescription: "{cm:GroupIntegration}"; Flags: unchecked
+
+[InstallDelete]
+; eski sürümlerin mağaza paketleri birikmesin
+Type: files; Name: "{app}\TarayiciEklentisi\ElfCaesar-*.zip"
+Type: files; Name: "{app}\TarayiciEklentisi\ElfCaesar-*.xpi"
 
 [Files]
 Source: "{#SrcDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs

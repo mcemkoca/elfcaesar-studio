@@ -6,8 +6,8 @@ Sürümleme: MAJOR.MINOR.PATCH (Semantic Versioning)
   MAJOR (6.x → 7.0.0): dosya biçimi veya motor değişikliği
 """
 APP_NAME = "ElfCaesar Studio"
-APP_VERSION = "6.10.3"
-APP_BUILD = 6103  # Windows dosya sürümünün 4. hanesi: 6.10.3.6103
+APP_VERSION = "6.11.0"
+APP_BUILD = 6110  # Windows dosya sürümünün 4. hanesi: 6.11.0.6110
 APP_SHORT_VERSION = APP_VERSION
 APP_CODENAME = "Windows Edition"
 PUBLISHER = "Dante"

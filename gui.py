@@ -2900,12 +2900,23 @@ def selftest() -> dict:
                 _sh.combine_text(_sh.split_text(b"elf", 2, 3)[1:]) == b"elf"
     except Exception as exc:
         checks["password_vault_error"] = repr(exc)
+    try:
+        from studio_ui import breaches as _br, pwgen as _pg, lifecycle as _lc
+        checks["breach_catalog"] = _br.Catalog.load().size
+        _p = _pg.generate(_pg.policy_for_site(_pg.Policy(), maxlength=12, passwordrules="required: lower, upper, digit"))
+        checks["pwgen"] = len(_p) == 12 and leaks.check(_p) is None
+        _e = _En("S", "u", "Eski-Parola-1!", "https://s.com"); _m = {}
+        _lc.start_change(_e, "Yeni-Parola-2!"); _lc.confirm_change(_m, _e)
+        checks["lifecycle"] = _e.password == "Yeni-Parola-2!" and _e.history[0]["password"] == "Eski-Parola-1!"
+    except Exception as exc:
+        checks["lifecycle_error"] = repr(exc)
     from studio_ui import badges as _bd
     checks["badges"] = all((ASSETS / "badges" / f"{b[0]}_128.png").exists() for b in _bd.BADGES)
     checks["guide"] = bool(guides.CHAPTERS) and (runtime.resource_dir() / "docs" / "kilavuz" / "index.html").exists()
     result["ok"] = bool(checks.get("password_vault") and checks.get("badges") and checks.get("guide") and checks.get("folder_vault") and checks.get("masking") and checks.get("integrity", "ok") == "ok" and checks.get("leak_list_entries", 0) > 10000 and checks.get("leak_detects_turkish")
                         and checks.get("vault_roundtrip") and checks["assets"] and checks.get("paper_backup_qr")
-                        and checks.get("kvkk_scan"))
+                        and checks.get("kvkk_scan") and checks.get("breach_catalog", 0) > 500 and checks.get("pwgen")
+                        and checks.get("lifecycle"))
     out = runtime.local_data_dir() / "selftest.json"
     out.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     return result

@@ -17,10 +17,11 @@ Sürümleme MAJOR.MINOR.PATCH: küçük adımlar PATCH (6.8.x), özellik gruplar
 | 6.10.5 | Web sohbet | WhatsApp Web / Telegram Web'de sağ tık şifrele/çöz |
 | **6.10.2** ✓ | Sağlamlaştırma | İç güvenlik incelemesi, kasa yedek + bulut senkronu, SADE mod, hata bildirimi, yasal taslaklar |
 | **6.10.3** ✓ | Firefox ve mağaza | Firefox eklentisi, Chrome Web Mağazası paketi, yenilenen kılavuz ve video |
+| **6.11.0** ✓ | Parola Yaşam Döngüsü | Değişim Planı ve süreç takibi, Parola Üretici, Sızıntı Merkezi (site ihlalleri), eklentide parola önerme ve kaydetme |
 | 6.10.6 | Beta geri bildirimi | Beta bildirimlerinin düzeltilmesi; bağımsız güvenlik denetimi; güvenilir kod imzalama |
 | 6.10.7 | Lisanslama | Kişisel (ücretsiz) / KVKK Pro / Kurumsal sürümleri, çevrimdışı imzalı lisans dosyası |
 | 6.10.8 | Erişilebilirlik | Tam klavye gezintisi, yüksek kontrast tema, yazı ölçeği, İngilizce arayüz |
-| 6.11.0 | QR ve mobil | Kişi kartı ve kısa mesajlar için QR; telefon kamerasıyla kart paylaşımı |
+| 6.12.0 | QR ve mobil | Kişi kartı ve kısa mesajlar için QR; telefon kamerasıyla kart paylaşımı |
 | 6.11.1 | Kasa sağlığı | Klasör tarama, bozuk/yedeksiz kasa uyarısı, yedekleme sihirbazı |
 | 6.11.2 | KVKK Pro | PDF/OCR tarama, VKN ve pasaport tespiti, hatalı pozitif beyaz listesi, sektör şablonları, CSV/JSON dışa aktarım, saklama süresi takvimi |
 | 6.11.3 | Dayanıklılık | Reed-Solomon kurtarma bloğu (bozulan kasayı onarma), büyük dosyalar için parçalı akış şifreleme (>1 GB) |

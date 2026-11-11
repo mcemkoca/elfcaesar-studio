@@ -44,7 +44,8 @@ def audit(entries: list[Entry], now: float | None = None) -> dict:
     for e in entries:
         issues = []
         st = password_strength(e.password) if e.password else {"level": 0, "leak": None, "name": "Boş"}
-        if st.get("leak") or leaks.is_blocked(e.password or ""):
+        hibp_hit = bool(e.hibp) and abs(e.hibp.get("changed", -1) - (e.changed or 0)) < 1e-6 and e.hibp.get("count", 0) > 0
+        if st.get("leak") or hibp_hit or leaks.is_blocked(e.password or ""):
             issues.append("leaked")
         if len(by_pw[e.password]) > 1:
             issues.append("reused")

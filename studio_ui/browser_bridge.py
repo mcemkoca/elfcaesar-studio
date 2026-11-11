@@ -6,6 +6,9 @@ Güvenlik kuralları
   • Parola yalnızca sayfanın kayıtlı alan adıyla BİREBİR aynı kayıt için verilir (alt alan adları dahil,
     ör. accounts.google.com → google.com). Benzer görünen alan adına hiçbir şey verilmez, oltalama uyarısı döner.
   • Parola kasası kilitliyse hiçbir şey dönmez.
+  • 6.11: yeni parola önerme (generate), gönderilen formu kasayla karşılaştırma (check) ve kaydetme/güncelleme (save).
+    Kaydetme yalnızca https (veya localhost) sayfalarda, yalnızca o sayfanın kendi alan adı için ve oltalama şüphesi
+    yokken yapılır; güncellemede eski parola geçmişte saklanır. Kasaya dokunan her işlem Tk iş parçacığında yürür.
 """
 from __future__ import annotations
 
@@ -19,7 +22,8 @@ from . import pwaudit
 from .pwvault import registrable_domain
 
 HOST_NAME = "com.dante.elfcaesar"
-PROTOCOL = 1
+PROTOCOL = 2
+SAVE_LIMIT_PER_MIN = 20
 
 
 def key_hash(key: str) -> str:
@@ -33,6 +37,7 @@ class BrowserBridge:
         self._assoc_block_until = 0.0
         self.ui_tasks: queue.Queue = queue.Queue()
         self.events: queue.Queue = queue.Queue()
+        self._saves: list[float] = []
 
     # ------------------------------------------------------------ sunucu iş parçacığı
     def handle(self, data: dict) -> dict:
@@ -48,6 +53,12 @@ class BrowserBridge:
                 return self._query(data)
             if req == "get":
                 return self._get(data)
+            if req == "generate":
+                return self._generate(data)
+            if req == "check":
+                return self._check(data)
+            if req == "save":
+                return self._save(data)
             if req == "open_app":
                 self.ui_tasks.put(("open", None))
                 return {"ok": True}
@@ -132,6 +143,130 @@ class BrowserBridge:
         self.events.put(("filled", (e.title, registrable_domain(origin), insecure)))
         return {"ok": True, "username": e.username, "password": e.password, "insecure": insecure}
 
+    # ------------------------------------------------------------ 6.11: üret · denetle · kaydet
+    def _on_ui(self, fn, timeout=15):
+        """fn'i Tk iş parçacığında çalıştırır ve sonucunu bekler (kasa nesnesi tek iş parçacığından değişsin)."""
+        box, done = {}, threading.Event()
+        self.ui_tasks.put(("call", (fn, box, done)))
+        if not done.wait(timeout):
+            return {"ok": False, "error": "timeout"}
+        if "error" in box:
+            return {"ok": False, "error": "internal", "detail": box["error"][:200]}
+        return box["result"]
+
+    @staticmethod
+    def _secure_origin(origin: str) -> bool:
+        o = origin.lower()
+        return o.startswith("https://") or o.startswith(("http://localhost", "http://127.0.0.1"))
+
+    def _origin_checks(self, origin: str):
+        pv = self._vault()
+        if pv is None:
+            return pv, {"ok": False, "error": "locked"}
+        domain = registrable_domain(origin)
+        if not domain:
+            return pv, {"ok": False, "error": "no_domain"}
+        look = pwaudit.lookalike(origin, {e.domain for e in pv.entries if e.domain})
+        if look:
+            self.events.put(("phish", look))
+            return pv, {"ok": False, "error": "lookalike", "lookalike": look}
+        return pv, None
+
+    def _generate(self, data):
+        origin = str(data.get("origin") or "")
+        pv, err = self._origin_checks(origin)
+        if err:
+            return err
+        rules = data.get("rules") if isinstance(data.get("rules"), dict) else {}
+        domain = registrable_domain(origin)
+
+        def work():
+            from . import pwgen
+            base = self.app.gen_policy(domain)
+            if base.mode == "pin":
+                base.mode = "random"
+            pol = pwgen.policy_for_site(base, maxlength=rules.get("maxlength") or 0, minlength=rules.get("minlength") or 0,
+                                        passwordrules=str(rules.get("passwordrules") or "")[:300],
+                                        pattern=str(rules.get("pattern") or "")[:120])
+            pw = self.app.generate_for(domain, "tarayıcı", pol)
+            pv.save()
+            return {"ok": True, "password": pw, "bits": round(pwgen.entropy_bits(pol)), "domain": domain}
+        return self._on_ui(work)
+
+    def _match(self, pv, domain, username):
+        u = (username or "").strip().casefold()
+        same = [e for e in pv.entries if e.domain == domain]
+        exact = [e for e in same if (e.username or "").strip().casefold() == u]
+        if exact:
+            return exact[0]
+        if not u and len(same) == 1:
+            return same[0]
+        return None
+
+    def _check(self, data):
+        origin = str(data.get("origin") or "")
+        pv, err = self._origin_checks(origin)
+        if err:
+            return err
+        if not self._secure_origin(origin):
+            return {"ok": True, "state": "insecure"}
+        pw = str(data.get("password") or "")
+        if not pw:
+            return {"ok": True, "state": "empty"}
+        e = self._match(pv, registrable_domain(origin), str(data.get("username") or ""))
+        if e is None:
+            return {"ok": True, "state": "new", "domain": registrable_domain(origin)}
+        if e.password == pw:
+            return {"ok": True, "state": "same", "title": e.title}
+        if e.pending.get("password") == pw:
+            return {"ok": True, "state": "pending_match", "title": e.title}
+        return {"ok": True, "state": "different", "title": e.title}
+
+    def _save(self, data):
+        origin = str(data.get("origin") or "")
+        pv, err = self._origin_checks(origin)
+        if err:
+            return err
+        if not self._secure_origin(origin):
+            return {"ok": False, "error": "insecure_origin"}
+        now = time.time()
+        self._saves = [t for t in self._saves if now - t < 60]
+        if len(self._saves) >= SAVE_LIMIT_PER_MIN:
+            return {"ok": False, "error": "rate_limited"}
+        self._saves.append(now)
+        pw = str(data.get("password") or "")[:512]
+        username = str(data.get("username") or "")[:256].strip()
+        if not pw:
+            return {"ok": False, "error": "empty"}
+        domain = registrable_domain(origin)
+
+        def work():
+            from . import lifecycle
+            from .pwvault import Entry, host_of
+            e = self._match(pv, domain, username)
+            if e is None:
+                host = host_of(origin)
+                title = domain.split(".")[0].capitalize() if domain else host
+                e = Entry(title, username, pw, origin, source="Tarayıcı eklentisi")
+                pv.add(e)
+                lifecycle.log_event(pv.meta, "created", e, "Tarayıcıdan kaydedildi")
+                result = "created"
+            elif e.password == pw:
+                result = "unchanged"
+            elif e.pending.get("password") == pw:
+                lifecycle.confirm_change(pv.meta, e)
+                result = "confirmed"
+            else:
+                e.set_password(pw)
+                if e.pending:
+                    e.pending = {}
+                lifecycle.log_event(pv.meta, "changed", e, "Tarayıcıda değiştirildi")
+                result = "updated"
+            pv.save()
+            self.events.put(("saved", (e.title, domain, result)))
+            return {"ok": True, "result": result, "title": e.title}
+        return self._on_ui(work)
+
     # ------------------------------------------------------------ Tk iş parçacığı
     def pump(self):
         """Tk döngüsünden çağrılır: onay pencereleri ve bildirimler."""
@@ -154,6 +289,13 @@ class BrowserBridge:
                 done.set()
                 app.notify("success" if box["ok"] else "warning", "vault",
                            "Tarayıcı eklentisi eşleştirildi" if box["ok"] else "Tarayıcı eşleştirmesi reddedildi", browser)
+            elif kind == "call":
+                fn, box, done = payload
+                try:
+                    box["result"] = fn()
+                except Exception as exc:  # noqa: BLE001
+                    box["error"] = str(exc)
+                done.set()
             elif kind == "save_keys":
                 app.set_pref("browser_keys", payload)
             elif kind == "open":
@@ -176,6 +318,16 @@ class BrowserBridge:
             elif kind == "downgrade":
                 app.notify("warning", "vault", "Şifresiz sayfaya parola verilmedi",
                            f"{payload[0]} kaydı https; sayfa http · {payload[1]}")
+            elif kind == "saved":
+                title, domain, result = payload
+                text = {"created": "Tarayıcıdan yeni kayıt eklendi", "updated": "Tarayıcıda değişen parola güncellendi",
+                        "confirmed": "Değişim tamamlandı (tarayıcıda onaylandı)", "unchanged": "Parola zaten kayıtlı"}[result]
+                app.notify("success", "vault", text, f"{title} · {domain}", toast=result != "unchanged")
+                if "passwords" in getattr(app, "pages", {}):
+                    try:
+                        app._pw_rebuild()
+                    except Exception:
+                        pass
             elif kind == "phish":
                 app.notify("error", "vault", "Oltalama uyarısı: tarayıcıda sahte site",
                            f"{payload['fake']} gerçek {payload['real']} değil · {payload['why']}")

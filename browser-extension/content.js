@@ -36,6 +36,22 @@
     el.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
+  const NEW_RX = /new|yeni|confirm|onay|tekrar|repeat|again|retype|register|kayit|kayıt|signup|sign-up|create/i;
+  const CUR_RX = /current|old|eski|mevcut|existing/i;
+  const attrs = (el) => [el.name, el.id, el.placeholder, el.getAttribute("aria-label")].filter(Boolean).join(" ");
+  const pwFields = (scope) => [...(scope || document).querySelectorAll('input[type="password"]')].filter((i) => visible(i));
+  function isCurrent(el) { return (el.autocomplete || "").includes("current-password") || CUR_RX.test(attrs(el)); }
+  function isNewField(el) {
+    if (isCurrent(el)) return false;
+    if ((el.autocomplete || "").includes("new-password") || NEW_RX.test(attrs(el))) return true;
+    const scope = el.form || document;
+    return pwFields(scope).length >= 2 || NEW_RX.test((scope.getAttribute && (scope.getAttribute("action") || scope.id)) || "");
+  }
+  function rulesOf(el) {
+    return { maxlength: el.maxLength > 0 ? el.maxLength : 0, minlength: el.minLength > 0 ? el.minLength : 0,
+             passwordrules: el.getAttribute("passwordrules") || "", pattern: el.getAttribute("pattern") || "" };
+  }
+
   // ---------- arayüz (Shadow DOM: sayfa stillerinden yalıtılmış)
   const host = document.createElement("elfcaesar-ui");
   host.style.cssText = "all:initial;position:absolute;top:0;left:0;z-index:2147483647";
@@ -54,6 +70,14 @@
     .banner{position:fixed;left:0;right:0;top:0;padding:12px 18px;background:#5c1018;color:#fff;
             font:600 14px/1.4 "Segoe UI",system-ui,sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.4);display:flex;gap:14px;align-items:center}
     .banner button{margin-left:auto;background:#fff;color:#5c1018;border:0;border-radius:6px;padding:6px 10px;font-weight:700;cursor:pointer}
+    .item.gen b{color:#f4b65e}
+    .save{position:fixed;right:18px;bottom:18px;width:340px;background:#0f1a27;color:#e9f0f7;border:1px solid #f4b65e;border-radius:12px;
+          font:13px/1.45 "Segoe UI",system-ui,sans-serif;box-shadow:0 12px 34px rgba(0,0,0,.5);overflow:hidden}
+    .save .head{color:#f4b65e}
+    .save .txt{padding:10px 12px 4px} .save .txt b{color:#fff} .save .sub{padding:0 12px 10px;color:#8a9db1;font-size:12px}
+    .save .row{display:flex;gap:8px;justify-content:flex-end;padding:0 12px 12px}
+    .save button{border:0;border-radius:7px;padding:7px 12px;font:700 12px "Segoe UI",system-ui,sans-serif;cursor:pointer}
+    .save .yes{background:#f4b65e;color:#1a1206} .save .no{background:#22364b;color:#e9f0f7}
   `;
   root.appendChild(style);
   document.documentElement.appendChild(host);
@@ -97,6 +121,13 @@
     menu.innerHTML = `<div class="head">ELFCAESAR · PAROLA KASASI</div><div class="note">Kasaya soruluyor…</div>`;
     root.appendChild(menu);
     place(menu, btn, () => -236, (r) => r.height + 6);
+    if (isNewField(pw)) {
+      const g = document.createElement("button");
+      g.className = "item gen";
+      g.innerHTML = "<b>✦ Güçlü parola öner</b><span>Sitenin kurallarına uyar, kasaya da yazılır</span>";
+      g.onclick = (ev) => { if (ev.isTrusted) suggest(pw, btn); };
+      menu.insertBefore(g, menu.querySelector(".note"));
+    }
     const r = await send({ type: "query" });
     const note = menu && menu.querySelector(".note");
     if (!menu) return;
@@ -114,7 +145,7 @@
       menu.appendChild(open);
       return;
     }
-    if (!r.entries.length) { note.textContent = `${r.domain} için kasada kayıt yok.`; return; }
+    if (!r.entries.length) { note.textContent = isNewField(pw) ? `${r.domain} için kayıt yok; yukarıdan güçlü parola önerebilirim.` : `${r.domain} için kasada kayıt yok.`; return; }
     note.remove();
     for (const e of r.entries) {
       const it = document.createElement("button");
@@ -139,12 +170,96 @@
     }
   }
 
+  async function suggest(pw, btn) {
+    const r = await send({ type: "generate", rules: rulesOf(pw) });
+    closeMenu();
+    if (!r.ok) {
+      openNote(btn, r.error === "locked" ? "Parola kasası kilitli: ElfCaesar'da kasayı aç."
+        : r.error === "lookalike" ? "Bu site kasandaki bir siteyi taklit ediyor olabilir; parola önerilmedi."
+        : r.error === "not_paired" ? "Eklenti eşleşmemiş: araç çubuğundaki ElfCaesar simgesinden EŞLEŞTİR." : `Hata: ${r.error}`);
+      return;
+    }
+    const scope = pw.form || document;
+    let targets = pwFields(scope).filter((i) => !isCurrent(i));
+    if (!targets.length) targets = [pw];
+    targets.forEach((t) => setValue(t, r.password));
+    filledByUs = r.password;
+    openNote(btn, `Güçlü parola yazıldı (${r.bits} bit) ve ElfCaesar'da “son üretilenler”e kaydedildi. Formu gönderince kasaya kaydetmeyi soracağım.`);
+    setTimeout(closeMenu, 6000);
+  }
+
+  // ---------- gönderimde kaydet / güncelle
+  let filledByUs = "", lastCapture = "", saveBox = null;
+  function capture(scope) {
+    const fields = pwFields(scope && scope.querySelectorAll ? scope : document);
+    if (!fields.length) return;
+    const fresh = fields.filter((f) => !isCurrent(f) && f.value);
+    const pick = (fresh.length ? fresh : fields.filter((f) => f.value))[0];
+    if (!pick || !pick.value) return;
+    const uf = userFieldFor(fields[0]);
+    const username = uf ? uf.value.trim() : "";
+    const sig = `${username}\u0000${pick.value}`;
+    if (sig === lastCapture) return;
+    lastCapture = sig;
+    send({ type: "stash", username, password: pick.value }).then((r) => { if (r && r.show) showSave(r); });
+  }
+  function showSave(r) {
+    if (saveBox) saveBox.remove();
+    saveBox = document.createElement("div");
+    saveBox.className = "save";
+    const head = r.state === "different" ? "PAROLA DEĞİŞMİŞ" : r.state === "pending_match" ? "DEĞİŞİM PLANI" : "YENİ HESAP";
+    const yes = r.state === "different" ? "Güncelle" : r.state === "pending_match" ? "Onayla" : "Kaydet";
+    const mk = (tag, cls, text) => { const el = document.createElement(tag); el.className = cls; if (text) el.textContent = text; return el; };
+    const txt = mk("div", "txt"), sub = mk("div", "sub"), row = mk("div", "row");
+    row.append(mk("button", "no", "Şimdi değil"), mk("button", "yes"));
+    saveBox.append(mk("div", "head", `ELFCAESAR · ${head}`), txt, sub, row);
+    const who = r.username ? `${r.username} · ${r.host}` : r.host;
+    txt.textContent = r.state === "different" ? `“${r.title}” kaydındaki parola güncellensin mi?`
+      : r.state === "pending_match" ? `“${r.title}” için hazırlanan yeni parola sitede kullanıldı. Değişim tamamlansın mı?`
+      : r.state === "locked" ? "Parola kasası kilitli. ElfCaesar'da kasayı açıp Kaydet'e bas." : "Bu giriş ElfCaesar parola kasasına kaydedilsin mi?";
+    sub.textContent = who + (r.state === "different" ? " · eski parola geçmişte saklanır" : "");
+    const yb = saveBox.querySelector(".yes");
+    yb.textContent = yes;
+    yb.onclick = async (ev) => {
+      if (!ev.isTrusted) return;
+      const res = await send({ type: "save_stash" });
+      if (res.ok) {
+        txt.textContent = res.result === "created" ? "Kasaya kaydedildi ✓" : res.result === "updated" ? "Parola güncellendi ✓"
+          : res.result === "confirmed" ? "Değişim tamamlandı ✓" : "Zaten kayıtlı ✓";
+        sub.textContent = ""; saveBox.querySelector(".row").remove();
+        setTimeout(() => { if (saveBox) { saveBox.remove(); saveBox = null; } }, 2500);
+      } else {
+        sub.textContent = res.error === "locked" ? "Kasa hâlâ kilitli: ElfCaesar'da kasayı aç, sonra tekrar Kaydet."
+          : res.error === "insecure_origin" ? "Şifresiz (http) sayfalarda parola kaydedilmez." : `Kaydedilemedi: ${res.error}`;
+      }
+    };
+    saveBox.querySelector(".no").onclick = (ev) => { if (!ev.isTrusted) return; send({ type: "drop_stash" }); saveBox.remove(); saveBox = null; };
+    root.appendChild(saveBox);
+  }
+  document.addEventListener("submit", (e) => { if (e.isTrusted) capture(e.target); }, true);
+  document.addEventListener("click", (e) => {
+    if (!e.isTrusted) return;
+    const b = e.target.closest && e.target.closest('button,input[type="submit"],[role="button"]');
+    if (!b) return;
+    const scope = b.form || b.closest("form") || document;
+    if (pwFields(scope).some((f) => f.value)) setTimeout(() => capture(scope), 0);
+  }, true);
+  document.addEventListener("keydown", (e) => {
+    if (e.isTrusted && e.key === "Enter" && e.target && e.target.type === "password") capture(e.target.form || document);
+  }, true);
+  // önceki sayfada gönderilmiş, henüz yanıtlanmamış kaydetme sorusu
+  // (gönderim ile yeni sayfanın yüklenmesi yarışabilir: birkaç kez sor)
+  [0, 1200, 3000].forEach((ms) => setTimeout(() => {
+    if (saveBox) return;
+    send({ type: "pending_save" }).then((r) => { if (r && r.show && !saveBox) showSave(r); });
+  }, ms));
+
   function attach(pw) {
     if (seen.has(pw) || !visible(pw)) return;
     seen.add(pw);
     const btn = document.createElement("button");
     btn.className = "btn";
-    btn.title = "ElfCaesar ile doldur";
+    btn.title = isNewField(pw) ? "ElfCaesar: güçlü parola öner" : "ElfCaesar ile doldur";
     root.appendChild(btn);
     const pos = () => place(btn, pw, (r) => r.width - 28, (r) => (r.height - 22) / 2);
     pos();

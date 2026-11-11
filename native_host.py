@@ -11,7 +11,7 @@ import sys
 
 from studio_ui import runtime
 
-ALLOWED = {"status", "associate", "query", "get", "open_app"}
+ALLOWED = {"status", "associate", "query", "get", "open_app", "generate", "check", "save"}
 MAX_MSG = 1024 * 1024
 
 
@@ -36,7 +36,8 @@ def handle(msg: dict, forward=runtime.request) -> dict:
     req = msg.get("request")
     if req not in ALLOWED:
         return {"ok": False, "error": "unknown_request"}
-    payload = {k: msg[k] for k in ("request", "key", "origin", "id", "browser", "code") if k in msg}
+    payload = {k: msg[k] for k in ("request", "key", "origin", "id", "browser", "code", "rules", "username", "password")
+               if k in msg}
     resp = forward(payload)
     if "rid" in msg:
         resp["rid"] = msg["rid"]

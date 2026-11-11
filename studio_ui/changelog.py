@@ -2,6 +2,18 @@
 from __future__ import annotations
 
 CHANGELOG = [
+    ("6.11.0", "11.11.2026", "Parola Yaşam Döngüsü", [
+        "YENİ · Değişim Planı ve süreç takibi: hangi parola neden ve ne kadar acil değişmeli; yeni parola önce “bekleyen” olarak saklanır, sitede değiştirince onaylanır; erteleme, zaman çizelgesi ve kasa sağlığı geçmişi.",
+        "YENİ · Parola Üretici: rastgele, heceli (söylenebilir) ve PIN; sitenin uzunluk/sembol kuralına (passwordrules) uyar, gücü tam hesaplar, sızıntı listesindekileri eler. Üretilen her parola kasada saklanır.",
+        "YENİ · Sızıntı Merkezi: Have I Been Pwned site ihlali kataloğu çevrim dışı gelir; parolan ihlalden önce belirlendiyse acil değişime alınır. Çevrim içi parola kontrolünün sonucu tarihiyle saklanır.",
+        "Tarayıcı eklentisi: kayıt ve parola değiştirme formlarında “Güçlü parola öner”; form gönderilince yeni hesabı kaydetme, değişen parolayı güncelleme ve Değişim Planı'nı tek tıkla tamamlama.",
+        "Kayıt penceresi: yenileme hatırlatması (90 / 180 / 365 gün) ve elle yapılan değişikliklerin zaman çizelgesine yazılması.",
+        "Ücretsiz güvenlik altyapısı: CodeQL, Bandit, pip-audit, gitleaks ve OpenSSF Scorecard; imzalı SHA256SUMS ve proje sitesi.",
+    ]),
+    ("6.10.3", "10.11.2026", "Firefox ve mağaza paketleri", [
+        "Tarayıcı eklentisinin Firefox sürümü ve Chrome Web Mağazası'na hazır paket.",
+        "Kılavuz ve tanıtım videosu 6.10.3 arayüzüyle yenilendi.",
+    ]),
     ("6.10.2", "10.11.2026", "Sağlamlaştırma · beta adayı", [
         "Güvenlik puanı düzeltildi: yeni kurulum artık Mithril 100 göstermez; kimlik, parola kasası ve kasa sağlığı puana katıldı.",
         "İç güvenlik incelemesi: paylaşımlı barındırma alan adları (github.io vb.) ayrıldı, https kaydı http sayfaya verilmez, eşleştirme kodu düzeltildi, eşleştirme isteği sınırlandı.",

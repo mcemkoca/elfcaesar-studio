@@ -130,7 +130,8 @@ CHAPTERS = [
         "key": "passwords", "title": "Parola Kasası", "icon": "lock",
         "summary": "Bütün parolaların tek ana parolayla korunan AES-256-GCM kasasında. Tarayıcılardan içe aktar, denetle, "
                    "Domino analiziyle zincirleme riskleri gör, Ctrl+Alt+P ile panoya dokunmadan doldur; Dijital Miras ve Baskı "
-                   "Parolası ile en zor anlara hazırlan.",
+                   "Parolası ile en zor anlara hazırlan. 6.11'den itibaren her parolanın yaşam döngüsü izlenir: güçlü parola üret, "
+                   "site ihlallerini ve sızıntıları yakala, Değişim Planı ile adım adım yenile.",
         "steps": [
             "KASA OLUŞTUR ile ana parolanı belirle (sızmış parolalar kabul edilmez). Kasa kilitlenince, panikte ve otomatik kilitte bellekten silinir.",
             "TARAYICIDAN İÇE AKTAR: Chrome/Edge/Brave/Opera/Firefox'ta parolaları dışa aktar, oluşan CSV'yi seç; açık CSV istersen güvenle imha edilir.",
@@ -138,6 +139,10 @@ CHAPTERS = [
             "PAROLAYI KOPYALA pano korumasıyla kopyalar; HIZLI DOLDUR ya da her yerde Ctrl+Alt+P kullanıcı adı + Tab + parolayı yazar.",
             "Parola Denetimi sızmış, tekrar eden, benzer, zayıf ve eski parolaları gösterir; GÖSTER listeyi o soruna göre süzer.",
             "Domino Analizi, bir hesabın düşmesi hâlinde başka hangi hesapların düşeceğini sıralar.",
+            "DEĞİŞİM PLANI hangi parolanın neden ve ne kadar acil değişmesi gerektiğini sıralar; DEĞİŞTİRMEYE BAŞLA yeni parolayı "
+            "hazırlar, sitenin değiştirme sayfasını açar; sitede değiştirince SİTEDE DEĞİŞTİRDİM ile tamamla.",
+            "PAROLA ÜRETİCİ rastgele, heceli (söylenebilir) veya PIN üretir; sitenin uzunluk ve sembol kuralını yazarsan ona uyar.",
+            "SIZINTI MERKEZİ kayıtlarını bilinen site veri ihlalleriyle karşılaştırır; PAROLALARIMI KONTROL ET isteğe bağlı çevrim içi kontrol yapar.",
             "KİŞİYE ŞİFRELİ GÖNDER bir kaydı yalnızca seçtiğin kişinin açabileceği bir sohbet mesajına çevirir.",
             "Tarayıcı eklentisi: EKLENTİYİ KUR → chrome://extensions → Geliştirici modu → Paketlenmemiş öğe yükle → TarayiciEklentisi klasörü; "
             "sonra eklenti simgesi → EŞLEŞTİR → uygulamada aynı kodu onayla. Giriş formlarındaki ElfCaesar düğmesi birebir eşleşen kaydı doldurur.",
@@ -150,26 +155,48 @@ CHAPTERS = [
         "sections": {
             "PAROLA KASASI KİLİTLİ": {"text": "Kasa kilitliyken hiçbir kayıt bellekte değildir. Ana parolayla aç, ilk kez kullanıyorsan oluştur; "
                                               "başka bir kasa dosyası seçebilir veya mirastan kurtarabilirsin."},
-            "BU BÖLÜMDE NELER VAR": {"text": "Parola Kasası'nın altı ana özelliğinin kısa tanıtımı."},
+            "BU BÖLÜMDE NELER VAR": {"text": "Parola Kasası'nın ana özelliklerinin kısa tanıtımı."},
             "01 / KAYITLAR": {"text": "Otomatik tamamlamalı arama, kayıt listesi (denetim sonucu ve parola yaşıyla), kopyalama, Hızlı Doldur, "
                                       "paylaşım, düzenleme ve silme. Çift tık düzenler, Enter parolayı kopyalar.",
                               "steps": ["Aramaya birkaç harf yaz.", "↑↓ ile öneriyi seç, Tab ile tamamla.", "Enter ile parolayı kopyala."]},
-            "02 / PAROLA DENETİMİ": {"text": "Kasa sağlık puanı (0–100) ve sorun sayıları: sızıntı listesinde, başka hesapta da kullanılan, "
+            "02 / DEĞİŞİM PLANI · SÜREÇ TAKİBİ": {
+                "text": "Her parolanın yolculuğu: oluşturuldu → risk tespit edildi → değişim sürüyor → değiştirildi. Liste en acil "
+                        "olandan başlar: site veri ihlali (parolan ihlalden önce belirlenmişse), sızıntı, tekrar, zayıflık, senin "
+                        "açtığın yenileme hatırlatması ve yaş. Yeni parola önce “bekleyen” olarak kasaya yazılır; sitedeki eski parola "
+                        "kaybolmaz. Kasa sağlığı her gün kaydedilir, üstteki çizgi gelişimini gösterir.",
+                "steps": ["Listeden bir kayıt seç, DEĞİŞTİRMEYE BAŞLA'ya bas.",
+                          "DEĞİŞTİRME SAYFASINI AÇ (destekleyen sitelerde doğrudan parola sayfası açılır).",
+                          "Eski ve yeni parolayı sırayla kopyala, sitede değiştir.", "SİTEDE DEĞİŞTİRDİM: yeni parola asıl parola olur, eskisi geçmişe girer.",
+                          "Acil olmayanları 7 GÜN ERTELE; ZAMAN ÇİZELGESİ bir kaydın bütün geçmişini gösterir."]},
+            "03 / PAROLA ÜRETİCİ": {
+                "text": "İşletim sisteminin kriptografik üreteciyle parola üretir. RASTGELE: 8–64 karakter, istediğin karakter sınıfları. "
+                        "HECELİ: “Kavu-mirta-Selo-dene-47” gibi söylenebilir, yazması kolay parolalar. PIN: kolay dizileri eleyen rakam kodu. "
+                        "Güç, üretim yönteminden tam hesaplanır (bit). Her parola sızıntı listesine karşı süzülür. Üretilen her parola "
+                        "kasada saklanır (SON ÜRETİLENLER): sitede kullanıp kaydetmeyi unutsan da kaybolmaz.",
+                "steps": ["Türü ve uzunluğu seç.", "Site sınırı varsa SİTE KURALI'na yaz: “16” ya da sitenin passwordrules metni.",
+                          "KOPYALA veya YENİ KAYITTA KULLAN."]},
+            "04 / SIZINTI MERKEZİ": {
+                "text": "Uygulamayla gelen katalog (Have I Been Pwned, CC BY 4.0) bilinen site veri ihlallerini içerir ve çevrim dışı çalışır. "
+                        "Kaydın sitesi, parolanı belirledikten sonra ihlal yaşadıysa ve sızan veriler arasında parolalar varsa kayıt acil "
+                        "değişime alınır. PAROLALARIMI KONTROL ET her parolayı k-anonimlikle (yalnızca özetin ilk 5 karakteri) kontrol "
+                        "eder ve sonucu tarihiyle saklar. KATALOĞU GÜNCELLE tüm listeyi indirir; hangi sitelerde hesabın olduğu gönderilmez. "
+                        "E-POSTAM SIZDI MI? kontrolü Have I Been Pwned sitesinde senin yazmanla yapılır."},
+            "05 / PAROLA DENETİMİ": {"text": "Kasa sağlık puanı (0–100) ve sorun sayıları: sızıntı listesinde, başka hesapta da kullanılan, "
                                              "birbirine çok benzeyen (Ankara2023 / Ankara2024), zayıf, 1 yıldan eski, şifresiz bağlantı."},
-            "03 / DOMİNO ANALİZİ": {"text": "Aynı parolayı paylaşan hesaplar ve e-posta hesabıyla sıfırlanabilen hesaplar üzerinden zincirleme "
+            "06 / DOMİNO ANALİZİ": {"text": "Aynı parolayı paylaşan hesaplar ve e-posta hesabıyla sıfırlanabilen hesaplar üzerinden zincirleme "
                                             "ele geçirme hesabı. Kayıtta kurtarma e-postası belirtirsen analiz daha isabetli olur."},
-            "04 / HIZLI DOLDUR · OLTALAMA KALKANI": {"text": "Ctrl+Alt+P ön plandaki pencereyi tanır, uyan kayıtları ★ ile öne çıkarır, seçileni "
+            "07 / HIZLI DOLDUR · OLTALAMA KALKANI": {"text": "Ctrl+Alt+P ön plandaki pencereyi tanır, uyan kayıtları ★ ile öne çıkarır, seçileni "
                                                              "klavyeden yazar (panosuz); hedef pencere öne gelmezse güvenlik için hiçbir şey yazmaz. "
                                                              "Bağlantı denetleyici ve pano radarı benzer alan adlarını yakalar. Tarayıcı eklentisi adres "
                                                              "çubuğundaki gerçek alan adını doğrular, yalnızca birebir eşleşen kaydı doldurur ve taklit sitede kırmızı uyarı gösterir."},
-            "05 / DİJİTAL MİRAS": {"text": "Kurtarma anahtarı Shamir'in Gizli Paylaşımıyla k / n parçaya bölünür. Miras kasası her kayıtta güncellenir; "
+            "08 / DİJİTAL MİRAS": {"text": "Kurtarma anahtarı Shamir'in Gizli Paylaşımıyla k / n parçaya bölünür. Miras kasası her kayıtta güncellenir; "
                                            "MİRASTAN KURTAR yeterli parça ve miras dosyasıyla kasayı yeni bir ana parolayla geri getirir."},
-            "07 / YEDEK VE SENKRON": {"text": "Her kaydetmede önceki sürümün şifreli kopyası “yedekler” klasörüne alınır (son 20) ve YEDEKLER ile geri "
+            "10 / YEDEK VE SENKRON": {"text": "Her kaydetmede önceki sürümün şifreli kopyası “yedekler” klasörüne alınır (son 20) ve YEDEKLER ile geri "
                                               "yüklenir. BULUT KLASÖRÜNE TAŞI ile kasayı OneDrive/Dropbox/Google Drive'a koy: diğer bilgisayardaki "
                                               "ElfCaesar aynı dosyayı açar, iki cihazdaki değişiklikler kayıt kayıt birleştirilir; sunucu yoktur.",
                                       "steps": ["BULUT KLASÖRÜNE TAŞI → OneDrive klasörünü seç.", "Diğer bilgisayarda BAŞKA KASA DOSYASI → aynı dosyayı seç.",
                                                 "Eşitleme servisi çakışma kopyası oluşturursa ÇAKIŞMALARI BİRLEŞTİR."]},
-            "06 / BASKI PAROLASI": {"text": "İkinci bir parola, zararsız kayıtlar içeren ayrı bir kasa açar. Zorla açtırılma durumunda gerçek kasan "
+            "09 / BASKI PAROLASI": {"text": "İkinci bir parola, zararsız kayıtlar içeren ayrı bir kasa açar. Zorla açtırılma durumunda gerçek kasan "
                                             "ortaya çıkmaz. Sahte kasanın varlığı bir dosya olarak bilgisayarda bulunur."},
         },
     },
