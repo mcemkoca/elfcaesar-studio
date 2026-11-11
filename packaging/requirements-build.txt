@@ -1,4 +1,4 @@
 # Windows kurulum paketini üretmek için (yalnızca derleme makinesinde)
 pyinstaller==6.11.1
-pyinstaller-hooks-contrib>=2024.10
+pyinstaller-hooks-contrib>=2026.9
 pytest>=8.0
